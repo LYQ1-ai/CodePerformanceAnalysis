@@ -142,18 +142,15 @@ class RegexSearchTool:
                             context = get_context(content, match,
                                                   context_search_options.context_chars_before,
                                                   context_search_options.context_chars_after)
-                            context_search_results = [context]
+                            context_search_results = []
                             for cp_regex, group_index in compiled_context_regex_filters:
-                                res = []
-                                for ctx in context_search_results:
-                                    context_matches = re.finditer(cp_regex, ctx)
-                                    res.extend([m.group(group_index) for m in context_matches if m])
-                                context_search_results = res
+                                context_matches = re.finditer(cp_regex, context)
+                                context_search_results.append([m.group(group_index) for m in context_matches if m])
 
                             thread_matches.setdefault(match.group(index_group), []).append({
                                 'file': filepath,
                                 'line': line_number,
-                                'addition_info': context_search_results
+                                'context_info': context_search_results
                             })
 
         except Exception as e:
